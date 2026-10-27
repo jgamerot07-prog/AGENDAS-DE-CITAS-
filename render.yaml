@@ -1,0 +1,31 @@
+# Despliegue del backend y la base de datos en Render (Blueprint)
+services:
+  - type: web
+    name: agenda-citas-api
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: agenda-citas-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: RUN_MIGRATIONS
+        value: 'true'
+      - key: CORS_ORIGIN
+        sync: false # URL del frontend, por ejemplo https://agenda-citas.vercel.app
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+
+databases:
+  - name: agenda-citas-db
+    plan: free
